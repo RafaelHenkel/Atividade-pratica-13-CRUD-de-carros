@@ -5,7 +5,7 @@ let sair = false;
 function escolherOpcao() {
   opcao = Number(
     prompt(
-      `Bem-vindo ao sistema de CRUD de veículos:
+      `    Bem-vindo ao sistema de CRUD de veículos:
     No momento, o sistema tem ${carros.length} carros cadastrados
     uma das opções para interagir com o sistema:
     1 - Cadastrar veículo 
@@ -21,7 +21,7 @@ function escolherOpcao() {
 
 function cadastrarVeiculo() {
   veiculo = {
-    ID: Math.floor(Math.random() * 100),
+    id: Math.floor(Math.random() * 100),
     modelo: prompt("Digite o MODELO do veiculo"),
     marca: prompt("Digite a MARCA do veiculo"),
     ano: Number(prompt("Digite o ANO do veiculo")),
@@ -31,18 +31,68 @@ function cadastrarVeiculo() {
   carros.push(veiculo);
 }
 function listarVeiculo() {
-  console.log(carros);
+  let carrosMap = carros.map((veiculo) => ({
+    id: veiculo.id,
+    modelo: veiculo.modelo,
+    marca: veiculo.marca,
+    ano: veiculo.ano,
+    cor: veiculo.cor,
+    preco: veiculo.preco,
+  }));
+  carrosMap
+    .sort((a, b) => a.preco - b.preco)
+    .forEach((veiculo) => {
+      console.log(
+        "ID: ",
+        veiculo.id,
+        "|",
+        "Modelo: ",
+        veiculo.modelo,
+        "|",
+        "Marca: ",
+        veiculo.marca,
+        "|",
+        "Ano: ",
+        veiculo.ano,
+        "|",
+        "Cor: ",
+        veiculo.cor,
+        "|",
+        "Preço: ",
+        veiculo.preco
+      );
+    });
 }
 
 function filtrarVeiculos() {
   let filtraVeiculos = prompt("Digite a marca que deseja verificar");
-  let marcaFiltrada = carros.filter((veiculo) => {
-    return veiculo.marca == filtraVeiculos;
-  });
-
-  console.log(marcaFiltrada);
+  carros
+    .filter((veiculo) => {
+      return veiculo.marca == filtraVeiculos;
+    })
+    .map((veiculo) => ({
+      id: veiculo.id,
+      modelo: veiculo.modelo,
+      cor: veiculo.cor,
+      preco: veiculo.preco,
+    }))
+    .sort((a, b) => a.preco - b.preco)
+    .forEach((veiculo) => {
+      console.log(
+        "ID: ",
+        veiculo.id,
+        "|",
+        "Modelo: ",
+        veiculo.modelo,
+        "|",
+        "Cor: ",
+        veiculo.cor,
+        "|",
+        "Preço: ",
+        veiculo.preco
+      );
+    });
 }
-
 function atualizarVeiculo() {
   let atualizar = Number(
     prompt("Digite o ID do veiculo que voce deseja alterar")
@@ -50,13 +100,28 @@ function atualizarVeiculo() {
   let filtroAtualizar = carros.filter((veiculo) => {
     return veiculo.id == atualizar;
   });
+  if (filtroAtualizar.find((veiculo) => veiculo.id == atualizar)) {
+    filtroAtualizar.map((veiculo) => {
+      veiculo.cor = prompt("Digite a nova cor do seu veiculo");
+      veiculo.preco = prompt("Digite o novo Preço do seu veiculo");
+    });
+  } else {
+    console.log(
+      "Veiculo nao encontrado, digite outro ID para ATUALIZAR seu veiculo"
+    );
+  }
 }
 
 function removerVeiculo() {
   let apagarPeloId = Number(prompt("Digite o ID do veiculo que deseja apagar"));
-  let filtroApagar = carros.filter((veiculo) => {
-    return veiculo.id == apagarPeloId;
-  });
+  let filtroApagar = carros.findIndex((veiculo) => veiculo.id == apagarPeloId);
+  if (filtroApagar != -1) {
+    carros.splice(filtroApagar, 1);
+  } else {
+    console.log(
+      "Veiculo nao encontrado, digite outro ID para EXCLUIR seu veiculo"
+    );
+  }
 }
 
 function sairDoSistema() {
@@ -112,6 +177,7 @@ do {
     // inicial depois"
     // -> Se o veículo existir, o sistema deve permitir que o usuário
     // atualize somente a cor e o preço.
+    atualizarVeiculo();
   } else if (opcao == 5) {
     //     5 - Remover veículo
     // -> Ao entrar nesta opção o sistema deve pedir para o
@@ -121,6 +187,7 @@ do {
     // "Veículo, não encontrado. O usuário deve voltar para o menu
     // inicial depois"
     // -> Se o veículo existir, o sistema deve remover o veículo
+    removerVeiculo();
   } else if (opcao == 6) {
     //     6 - Sair do sistema
 
